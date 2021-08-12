@@ -9,7 +9,7 @@ uses
   FireDAC.Stan.Pool, FireDAC.UI.Intf, FireDAC.Phys.IB, FireDAC.Phys.IBDef, FireDAC.Phys.MSSQL, FireDAC.Phys.MSSQLDef,
   FireDAC.VCLUI.Wait, MVCFramework.Controllers.Register, MVCFramework, MVCFramework.Commons,
   MVCFramework.ActiveRecordController, MVCFramework.ActiveRecord, MVCFramework.Middleware.StaticFiles, Web.HTTPApp,
-  Controllers.AtmIndex;
+  Controllers.AtmIndex, MVCFramework.Middleware.Swagger, MVCFramework.Swagger.Commons, MVCFramework.Middleware.CORS;
 
 type
   TATMWebModule = class(TWebModule)
@@ -32,6 +32,8 @@ implementation
 {$R *.dfm}
 
 procedure TATMWebModule.WebModuleCreate(Sender: TObject);
+var
+  SwagInfo: TMVCSwaggerInfo;
 begin
   FEngine := TMVCEngine.Create(Self,
     procedure(Config: TMVCConfig)
@@ -57,6 +59,23 @@ begin
     end);
   FEngine.AddController(TAtmIndexController);
   TControllersRegister.Instance.AddControllersInEngine(FEngine, 'ATMServer');
+
+  SwagInfo.Title := 'ATM Server';
+  SwagInfo.Version := 'v 0.1';
+  SwagInfo.Description := 'ATM Server ' + DMVCFRAMEWORK_VERSION +' Swagger Support';
+//  SwagInfo.ContactName := 'Daniele Teti';
+//  SwagInfo.ContactEmail := 'd.teti@bittime.it';
+//  SwagInfo.ContactUrl := 'http://www.danieleteti.it';
+  SwagInfo.LicenseName := 'Apache v2';
+  SwagInfo.LicenseUrl := 'https://www.apache.org/licenses/LICENSE-2.0';
+  FEngine.AddMiddleware(TMVCCORSMiddleware.Create);
+  FEngine.AddMiddleware(TMVCStaticFilesMiddleware.Create(
+    '/swagger', { StaticFilesPath }
+    '.\www', { DocumentRoot }
+    'index.html' { IndexDocument }
+    ));
+  FEngine.AddMiddleware(TMVCSwaggerMiddleware.Create(FEngine, SwagInfo, '/api/swagger.json', 'Method for authentication using JSON Web Token (JWT)'));
+
 end;
 
 procedure TATMWebModule.WebModuleDestroy(Sender: TObject);

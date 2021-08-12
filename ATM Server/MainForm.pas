@@ -45,7 +45,7 @@ var
   LURL: string;
 begin
   StartServer;
-  LURL := Format('http://localhost:%s/api/atmindex', [EditPort.Text]);
+  LURL := Format('http://localhost:8080/swagger', [EditPort.Text]);
   ShellExecute(0, nil, PChar(LURL), nil, nil, SW_SHOWNOACTIVATE);
 end;
 
