@@ -4,9 +4,10 @@ interface
 
 uses
   MVCFramework, MVCFramework.Commons, MainDM, MVCFramework.Middleware.Authentication.RoleBasedAuthHandler,
-  Services.AtmIndex;
+  Services.AtmIndex, MVCFramework.Swagger.Commons;
 
 type
+  [MVCSwagAuthentication(atJsonWebToken)]
   TBaseController = class abstract(TMVCController)
   strict private
     FDM: TdmMain;

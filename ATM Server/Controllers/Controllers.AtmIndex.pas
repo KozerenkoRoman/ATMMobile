@@ -3,12 +3,14 @@ unit Controllers.AtmIndex;
 interface
 
 uses
-  MVCFramework, MVCFramework.Commons, MVCFramework.Serializer.Commons, Controllers.Base, Services.Base, Services.AtmIndex,
-  Entities.AtmIndex, Commons, mvcframework.Serializer.Intf, System.Generics.Collections, System.SysUtils;
+  MVCFramework, MVCFramework.Commons, MVCFramework.Serializer.Commons, MVCFramework.Swagger.Commons, Controllers.Base,
+  Services.Base, Services.AtmIndex, Entities.AtmIndex, Commons, mvcframework.Serializer.Intf, System.Generics.Collections,
+  System.SysUtils;
 
 type
   [MVCDoc('Resource that manages AtmIndex CRUD')]
   [MVCPath('/api/atmindex')]
+  [MVCSwagAuthentication(atJsonWebToken)]
   TAtmIndexController = class(TBaseController)
   public
     [MVCDoc('Returns the list of AtmIndex')]
@@ -27,6 +29,7 @@ type
     procedure GetByName(AKey: string; AYear: Integer);
 
     [MVCDoc('Returns next value from AtmIndex with the specified key')]
+    [MVCSwagParam(plPath, 'key', 'Key String', ptString, True)]
     [MVCPath('/next')]
     [MVCHTTPMethod([httpGET])]
     procedure GetNextNumber;
@@ -88,7 +91,7 @@ procedure TAtmIndexController.GetNextNumber;
 var
   Key: string;
 begin
-  Key := Context.Request.Params['q'];
+  Key := Context.Request.Params['key'];
   try
     Render(ObjectDict().Add('data', GetAtmIndexService.GetNextNumber(Key, CurrentYear)));
   except

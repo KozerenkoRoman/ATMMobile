@@ -12,6 +12,7 @@ object frmMain: TfrmMain
   Font.Style = []
   OldCreateOrder = False
   OnCreate = FormCreate
+  OnDestroy = FormDestroy
   PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
@@ -39,7 +40,7 @@ object frmMain: TfrmMain
     TabOrder = 1
     OnClick = ButtonStopClick
   end
-  object EditPort: TEdit
+  object edtPort: TEdit
     Left = 24
     Top = 67
     Width = 121
@@ -48,13 +49,22 @@ object frmMain: TfrmMain
     Text = '8080'
   end
   object ButtonOpenBrowser: TButton
-    Left = 24
-    Top = 112
+    Left = 22
+    Top = 136
     Width = 107
     Height = 25
     Caption = 'Open Browser'
     TabOrder = 3
     OnClick = ButtonOpenBrowserClick
+  end
+  object cbUseSSL: TCheckBox
+    Left = 24
+    Top = 94
+    Width = 97
+    Height = 17
+    Caption = 'Use SSL'
+    TabOrder = 4
+    OnClick = cbUseSSLClick
   end
   object ApplicationEvents1: TApplicationEvents
     OnIdle = ApplicationEvents1Idle
