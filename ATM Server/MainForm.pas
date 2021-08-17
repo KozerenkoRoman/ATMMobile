@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Messages, System.SysUtils, System.Variants, Winapi.Windows, Winapi.ShellApi, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.AppEvnts, Vcl.StdCtrls, IdHTTPWebBrokerBridge, Web.HTTPApp, IdSSLOpenSSL,
-  System.IOUtils, MVCFramework.Logger;
+  System.IOUtils, MVCFramework.Logger, Controllers.Base;
 
 type
   TSSLEventHandlers = class

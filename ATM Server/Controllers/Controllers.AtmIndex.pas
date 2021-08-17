@@ -4,8 +4,8 @@ interface
 
 uses
   MVCFramework, MVCFramework.Commons, MVCFramework.Serializer.Commons, MVCFramework.Swagger.Commons, Controllers.Base,
-  Services.Base, Services.AtmIndex, Entities.AtmIndex, Commons, mvcframework.Serializer.Intf, System.Generics.Collections,
-  System.SysUtils;
+  Services.Base, Commons, mvcframework.Serializer.Intf, System.Generics.Collections, System.SysUtils, Services.AtmIndex,
+  Entities.AtmIndex;
 
 type
   [MVCDoc('Resource that manages AtmIndex CRUD')]
@@ -119,7 +119,7 @@ end;
 
 procedure TAtmIndexController.Delete(AKey: string; AYear: Integer);
 var
-  AtmIndex: TAtmIndex;
+  AtmIndex: Entities.AtmIndex.TAtmIndex;
 begin
   GetAtmIndexService.StartTransaction;
   try
@@ -138,9 +138,9 @@ end;
 
 procedure TAtmIndexController.Update(AKey: string);
 var
-  AtmIndex: TAtmIndex;
+  AtmIndex: Entities.AtmIndex.TAtmIndex;
 begin
-  AtmIndex := Context.Request.BodyAs<TAtmIndex>;
+  AtmIndex := Context.Request.BodyAs<Entities.AtmIndex.TAtmIndex>;
   try
     AtmIndex.Key_String := AKey;
     GetAtmIndexService.Update(AtmIndex);

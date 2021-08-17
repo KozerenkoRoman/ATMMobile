@@ -4,7 +4,8 @@ interface
 
 uses
   MVCFramework, MVCFramework.Commons, MainDM, MVCFramework.Middleware.Authentication.RoleBasedAuthHandler,
-  Services.AtmIndex, MVCFramework.Swagger.Commons;
+  Services.AtmIndex, MVCFramework.Swagger.Commons, System.SysUtils, System.IniFiles, System.IOUtils,
+  Vcl.Forms;
 
 type
   [MVCSwagAuthentication(atJsonWebToken)]
@@ -29,9 +30,6 @@ type
 
 implementation
 
-uses
-  System.SysUtils;
-
 { TBaseController }
 
 destructor TBaseController.Destroy;
@@ -49,9 +47,21 @@ begin
 end;
 
 function TBaseController.GetDataModule: TdmMain;
+var
+  IniFile: TIniFile;
 begin
   if not Assigned(FDM) then
+  begin
     FDM := TdmMain.Create(nil);
+    IniFile := TIniFile.Create(TPath.GetFileNameWithoutExtension(Application.ExeName) + '.ini');
+    try
+      FDM.Connection.Params.Database := IniFile.ReadString('Params', 'Database', 'Ben');
+      FDM.Connection.Params.UserName := IniFile.ReadString('Params', 'UserName', 'sa');
+      FDM.Connection.Params.Password := IniFile.ReadString('Params', 'Password', '111');
+    finally
+      FreeAndNil(IniFile);
+    end;
+  end;
   Result := FDM;
 end;
 
