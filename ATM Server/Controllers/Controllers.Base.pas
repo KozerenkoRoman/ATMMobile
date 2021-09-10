@@ -4,18 +4,18 @@ interface
 
 uses
   MVCFramework, MVCFramework.Commons, MainDM, MVCFramework.Middleware.Authentication.RoleBasedAuthHandler,
-  Services.AtmIndex, MVCFramework.Swagger.Commons, System.SysUtils, System.IniFiles, System.IOUtils,
-  Vcl.Forms;
+  {Services.AtmIndex, }MVCFramework.Swagger.Commons, System.SysUtils, System.IniFiles, System.IOUtils,
+  Vcl.Forms, uConfig;
 
 type
   [MVCSwagAuthentication(atJsonWebToken)]
   TBaseController = class abstract(TMVCController)
   strict private
     FDM: TdmMain;
-    FAtmIndexService: TAtmIndexService;
+    //FAtmIndexService: TAtmIndexService;
     function GetDataModule: TdmMain;
   strict protected
-    function GetAtmIndexService: TAtmIndexService;
+    //function GetAtmIndexService: TAtmIndexService;
   public
     destructor Destroy; override;
   end;
@@ -34,32 +34,39 @@ implementation
 
 destructor TBaseController.Destroy;
 begin
-  FreeAndNil(FAtmIndexService);
+  //FreeAndNil(FAtmIndexService);
   FreeAndNil(FDM);
   inherited;
 end;
 
+{
 function TBaseController.GetAtmIndexService: TAtmIndexService;
 begin
   if not Assigned(FAtmIndexService) then
     FAtmIndexService := TAtmIndexService.Create(GetDataModule);
   Result := FAtmIndexService;
 end;
+}
 
 function TBaseController.GetDataModule: TdmMain;
 var
-  IniFile: TIniFile;
+  FConfig: TConfig;
 begin
   if not Assigned(FDM) then
   begin
     FDM := TdmMain.Create(nil);
-    IniFile := TIniFile.Create(TPath.GetFileNameWithoutExtension(Application.ExeName) + '.ini');
+    FConfig := TConfig.Create;
     try
-      FDM.Connection.Params.Database := IniFile.ReadString('Params', 'Database', 'Ben');
-      FDM.Connection.Params.UserName := IniFile.ReadString('Params', 'UserName', 'sa');
-      FDM.Connection.Params.Password := IniFile.ReadString('Params', 'Password', '111');
+      with FDM.Connection.Params do begin
+        Clear;
+        Add('DriverID=MSSQL');
+        Add('Server='+ FConfig.MSSQLServerName);
+        Add('Database='+ FConfig.MSSQLDatabase);
+        Add('User_Name='+ FConfig.MSSQLLogin);
+        Add('Password='+ FConfig.MSSQLPassword);
+      end;
     finally
-      FreeAndNil(IniFile);
+      FConfig.Free;
     end;
   end;
   Result := FDM;

@@ -4,8 +4,8 @@ interface
 
 uses
   MVCFramework, MVCFramework.Commons, MVCFramework.Serializer.Commons, MVCFramework.Swagger.Commons, Controllers.Base,
-  Services.Base, Commons, mvcframework.Serializer.Intf, System.Generics.Collections, System.SysUtils, Services.AtmIndex,
-  Entities.AtmIndex;
+  Services.Base, Commons, mvcframework.Serializer.Intf, System.Generics.Collections, System.SysUtils, {Services.AtmIndex,
+  Entities.AtmIndex,} System.Classes, Controllers.ZMQ.Client;
 
 type
   [MVCDoc('Resource that manages AtmIndex CRUD')]
@@ -44,115 +44,104 @@ type
     procedure Delete(AKey: string; AYear: Integer);
 
     [MVCDoc('Updates the AtmIndex with the specified id and return "200: OK"')]
+    [MVCSwagParam(plPath, 'AYear', 'yehusyear field', ptInteger, True, '2021')]
     [MVCSwagParam(plPath, 'AKey', 'key_string field', ptString, True, 'Hafkada')]
-    [MVCPath('/($AKey)')]
+    [MVCPath('/($AKey)/($AYear)')]
     [MVCHTTPMethod([httpPUT])]
-    procedure Update(AKey: string);
+    procedure Update(AKey: string; AYear: Integer);
 
     [MVCDoc('Creates a new AtmIndex and returns "201: Created"')]
     [MVCPath]
     [MVCHTTPMethod([httpPOST])]
     procedure Add;
+
+    procedure ProcessRequestOnWorker;
   end;
 
 implementation
+
+uses
+  REST.Types;
 
 { TAtmIndexController }
 
 procedure TAtmIndexController.GetAll;
 begin
-  Render(ObjectDict().Add('data', GetAtmIndexService.GetAll));
+  ProcessRequestOnWorker;
 end;
 
 procedure TAtmIndexController.GetMeta;
 begin
-  try
-    Render(ObjectDict().Add('data', GetAtmIndexService.GetMeta));
-  except
-    on E: EServiceException do
-    begin
-      raise EMVCException.Create(E.Message, '', 0, 404);
-    end
-    else
-      raise;
-  end;
+  ProcessRequestOnWorker;
 end;
 
 procedure TAtmIndexController.GetByName(AKey: string; AYear: Integer);
 begin
-  try
-    Render(ObjectDict().Add('data', GetAtmIndexService.GetByName(AKey, AYear)));
-  except
-    on E: EServiceException do
-    begin
-      raise EMVCException.Create(E.Message, '', 0, 404);
-    end
-    else
-      raise;
-  end;
+  ProcessRequestOnWorker;
 end;
 
 procedure TAtmIndexController.GetNextNumber;
-var
-  Key: string;
 begin
-  Key := Context.Request.Params['key'];
+  ProcessRequestOnWorker;
+end;
+
+procedure TAtmIndexController.ProcessRequestOnWorker;
+var L: TStringList;
+    cBody, cRequest, cStr, cHeader, cValue: string;
+begin
+  cRequest := GetContext.Request.HTTPMethodAsString + #13#10 + GetContext.Request.PathInfo;
+  cBody := GetContext.Request.Body;
+  L := TStringList.Create;
   try
-    Render(ObjectDict().Add('data', GetAtmIndexService.GetNextNumber(Key, CurrentYear)));
-  except
-    on E: EServiceException do
+    if not cBody.IsEmpty then
+      cRequest := cRequest + #13#10#13#10 + cBody;
+    L.Text := ZMQClient.SendRequestToService('MyService', cRequest);
+    if L.Count > 0 then
     begin
-      raise EMVCException.Create(E.Message, '', 0, 404);
+      cStr := L.Strings[0];
+      if cStr.StartsWith('HTTP/1.1') then
+      begin
+        cStr := Copy(cStr, 10, Length(cStr));
+        GetContext.Response.StatusCode := StrToIntDef(Copy(cStr, 1, Pos(' ', cStr) - 1), 0);
+        L.Delete(0);
+      end;
+      while L.Count > 0 do
+      begin
+        cStr := L.Strings[0];
+        if cStr.IsEmpty then
+        begin
+          L.Delete(0);
+          break;
+        end;
+        cHeader := Copy(cStr, 1, Pos(':', cStr) - 1);
+        cValue := Copy(cStr, Pos(':', cStr) + 1, Length(cStr));
+        GetContext.Response.SetCustomHeader(cHeader, cValue);
+        L.Delete(0);
+      end;
+      GetContext.Response.Content := L.Text;
+      GetContext.Response.Flush;
     end
     else
-      raise;
+      raise EMVCException.Create('No response from worker', '', 0, 503);
+  finally
+    L.Free;
   end;
+
 end;
 
 procedure TAtmIndexController.Add;
-var
-  AtmIndex: TAtmIndex;
 begin
-  AtmIndex := Context.Request.BodyAs<TAtmIndex>;
-  try
-    GetAtmIndexService.Add(AtmIndex);
-    Render201Created('/atmindex/' + AtmIndex.Key_String + '/' + AtmIndex.YehusYear.ToString, 'AtmIndex Created');
-  finally
-    AtmIndex.Free;
-  end;
+  ProcessRequestOnWorker;
 end;
 
 procedure TAtmIndexController.Delete(AKey: string; AYear: Integer);
-var
-  AtmIndex: Entities.AtmIndex.TAtmIndex;
 begin
-  GetAtmIndexService.StartTransaction;
-  try
-    AtmIndex := GetAtmIndexService.GetByName(AKey, AYear);
-    try
-      GetAtmIndexService.Delete(AtmIndex);
-    finally
-      AtmIndex.Free;
-    end;
-    GetAtmIndexService.Commit;
-  except
-    GetAtmIndexService.Rollback;
-    raise;
-  end;
+  ProcessRequestOnWorker;
 end;
 
-procedure TAtmIndexController.Update(AKey: string);
-var
-  AtmIndex: Entities.AtmIndex.TAtmIndex;
+procedure TAtmIndexController.Update(AKey: string; AYear: Integer);
 begin
-  AtmIndex := Context.Request.BodyAs<Entities.AtmIndex.TAtmIndex>;
-  try
-    AtmIndex.Key_String := AKey;
-    GetAtmIndexService.Update(AtmIndex);
-    Render(200, 'AtmIndex Updated');
-  finally
-    AtmIndex.Free;
-  end;
+  ProcessRequestOnWorker;
 end;
 
 end.

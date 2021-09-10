@@ -4,15 +4,11 @@ object dmMain: TdmMain
   Width = 361
   object Connection: TFDConnection
     Params.Strings = (
-      'Protocol=TCPIP'
-      'Server=localhost'
-      'CharacterSet=UTF8'
-      'ServerCharSet=UTF8'
-      'DriverID=MSSQL'
+      'Server=(local)\SQLEXPRESS'
+      'Password=1111'
+      'User_Name=sa'
       'Database=Ben'
-      'Password=111'
-      'ODBCAdvanced=AutoTranslate=yes'
-      'User_Name=sa')
+      'DriverID=MSSQL')
     FormatOptions.AssignedValues = [fvMapRules]
     FormatOptions.OwnMapRules = True
     FormatOptions.MapRules = <

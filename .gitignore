@@ -17,3 +17,14 @@
 /ATM Server/Client/JWTClient.dproj.local
 /ATM Server/Client/JWTClient.dsk
 /ATM Server/Client/JWTClient.identcache
+/__history/
+*.dproj.local
+*.identcache
+*.dcu
+*.exe
+*.map
+*.ini
+*.log
+*.dsk
+*.skincfg
+*.drc

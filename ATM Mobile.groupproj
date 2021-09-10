@@ -1,0 +1,48 @@
+﻿<Project xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+    <PropertyGroup>
+        <ProjectGuid>{7811BD06-60DA-466F-9431-3F8F5C1C0D53}</ProjectGuid>
+    </PropertyGroup>
+    <ItemGroup>
+        <Projects Include="ATM Server\ATMServer.dproj">
+            <Dependencies/>
+        </Projects>
+        <Projects Include="ATM Worker\ATMWorker.dproj">
+            <Dependencies/>
+        </Projects>
+    </ItemGroup>
+    <ProjectExtensions>
+        <Borland.Personality>Default.Personality.12</Borland.Personality>
+        <Borland.ProjectType/>
+        <BorlandProject>
+            <Default.Personality/>
+        </BorlandProject>
+    </ProjectExtensions>
+    <Target Name="ATMServer">
+        <MSBuild Projects="ATM Server\ATMServer.dproj"/>
+    </Target>
+    <Target Name="ATMServer:Clean">
+        <MSBuild Projects="ATM Server\ATMServer.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ATMServer:Make">
+        <MSBuild Projects="ATM Server\ATMServer.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="ATMWorker">
+        <MSBuild Projects="ATM Worker\ATMWorker.dproj"/>
+    </Target>
+    <Target Name="ATMWorker:Clean">
+        <MSBuild Projects="ATM Worker\ATMWorker.dproj" Targets="Clean"/>
+    </Target>
+    <Target Name="ATMWorker:Make">
+        <MSBuild Projects="ATM Worker\ATMWorker.dproj" Targets="Make"/>
+    </Target>
+    <Target Name="Build">
+        <CallTarget Targets="ATMServer;ATMWorker"/>
+    </Target>
+    <Target Name="Clean">
+        <CallTarget Targets="ATMServer:Clean;ATMWorker:Clean"/>
+    </Target>
+    <Target Name="Make">
+        <CallTarget Targets="ATMServer:Make;ATMWorker:Make"/>
+    </Target>
+    <Import Project="$(BDS)\Bin\CodeGear.Group.Targets" Condition="Exists('$(BDS)\Bin\CodeGear.Group.Targets')"/>
+</Project>

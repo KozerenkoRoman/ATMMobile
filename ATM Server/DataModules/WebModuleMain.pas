@@ -10,7 +10,16 @@ uses
   FireDAC.VCLUI.Wait, MVCFramework.Controllers.Register, MVCFramework, MVCFramework.Commons, Controllers.Users,
   MVCFramework.ActiveRecordController, MVCFramework.ActiveRecord, MVCFramework.Middleware.StaticFiles, Web.HTTPApp,
   Controllers.AtmIndex, MVCFramework.Middleware.Swagger, MVCFramework.Swagger.Commons, MVCFramework.Middleware.CORS,
-  MVCFramework.Middleware.Authentication, MVCFramework.Middleware.JWT, MVCFramework.JWT, Authentication;
+  MVCFramework.Middleware.Authentication, MVCFramework.Middleware.JWT, MVCFramework.JWT, Authentication,
+  IdHTTPWebBrokerBridge;
+
+type TMVCEngine = class(MVCFramework.TMVCEngine)
+  protected
+    procedure OnBeforeDispatch(ASender: TObject; ARequest: TWebRequest; AResponse: TWebResponse;
+      var AHandled: Boolean); override;
+end;
+
+type THackIdHTTPAppRequest = class(TIdHTTPAppRequest);
 
 type
   TATMWebModule = class(TWebModule)
@@ -93,6 +102,24 @@ begin
 procedure TATMWebModule.WebModuleDestroy(Sender: TObject);
 begin
   FEngine.Free;
+end;
+
+{ TMVCEngine }
+
+// will try to forward request here later
+procedure TMVCEngine.OnBeforeDispatch(ASender: TObject; ARequest: TWebRequest;
+  AResponse: TWebResponse; var AHandled: Boolean);
+begin
+  inherited;
+
+//    if SameText(ARequest.PathTranslated, '/api/login') then
+//      inherited
+//    else
+//    begin
+//
+//      AHandled := true;
+//    end;
+
 end;
 
 end.
