@@ -12,3 +12,8 @@
 /ATM Server/Controllers/__recovery/
 /ATM Server/DataModules/__history/
 /ATM Server/DataModules/__recovery/
+/ATM Server/Client/__history/
+/ATM Server/Client/.gitignore
+/ATM Server/Client/JWTClient.dproj.local
+/ATM Server/Client/JWTClient.dsk
+/ATM Server/Client/JWTClient.identcache

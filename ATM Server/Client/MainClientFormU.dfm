@@ -79,7 +79,7 @@ object Form5: TForm5
       Width = 154
       Height = 41
       Align = alLeft
-      Caption = 'Get a protected resource'
+      Caption = 'Get /api/atmindex/meta'
       TabOrder = 2
       OnClick = btnGetClick
     end

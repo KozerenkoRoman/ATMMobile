@@ -37,7 +37,6 @@ implementation
 
 {$R *.dfm}
 
-
 uses
   MVCFramework.RESTClient.Intf,
   MVCFramework.RESTClient,
@@ -56,23 +55,10 @@ begin
   begin
     lClient.SetBearerAuthorization(FJWT);
   end;
-//  lClient
-//    .AddQueryStringParam('firstname', 'Daniele')
-//    .AddQueryStringParam('lastname', 'Teti');
   lResp := lClient.Get('/api/atmindex/meta');
   if not lResp.Success then
     ShowMessage(lResp.Content);
   Memo2.Lines.Text := lResp.Content;
-
-//  { Getting HTML response }
-//  lClient
-//    .AddQueryStringParam('firstname', 'Daniele')
-//    .AddQueryStringParam('lastname', 'Teti');
-
-//  lResp := lClient.Accept('text/html').Get('/admin/role1');
-//  if not lResp.Success then
-//    ShowMessage(lResp.Content);
-//  Memo3.Lines.Text := lResp.Content;
 end;
 
 procedure TForm5.btnLOGINClick(Sender: TObject);
@@ -87,10 +73,9 @@ begin
   lRest := lClient.Post('/api/login');
   if not lRest.Success then
   begin
-    ShowMessage(
-      'HTTP ERROR: ' + lRest.StatusCode.ToString + sLineBreak +
-      'HTTP ERROR MESSAGE: ' + lRest.StatusText + sLineBreak +
-      'ERROR MESSAGE: ' + lRest.Content);
+    ShowMessage('HTTP ERROR: ' + lRest.StatusCode.ToString + sLineBreak +
+                'HTTP ERROR MESSAGE: ' + lRest.StatusText + sLineBreak +
+                'ERROR MESSAGE: ' + lRest.Content);
     Exit;
   end;
 
@@ -110,13 +95,12 @@ var
 begin
   lClient := TMVCRESTClient.New.BaseURL('localhost', 8080);
   lClient.ReadTimeOut(0);
-  lRest := lClient.Post('/api/login', '{"jwtusername":"user1","jwtpassword":"user1"}');
+  lRest := lClient.Post('/api/login', '{"jwtusername":"admin","jwtpassword":"adminpass"}');
   if not lRest.Success then
   begin
-    ShowMessage(
-      'HTTP ERROR: ' + lRest.StatusCode.ToString + sLineBreak +
-      'HTTP ERROR MESSAGE: ' + lRest.StatusText + sLineBreak +
-      'ERROR MESSAGE: ' + lRest.Content);
+    ShowMessage('HTTP ERROR: ' + lRest.StatusCode.ToString + sLineBreak +
+                'HTTP ERROR MESSAGE: ' + lRest.StatusText + sLineBreak +
+                'ERROR MESSAGE: ' + lRest.Content);
 
     Exit;
   end;
@@ -138,13 +122,12 @@ begin
   lClient := TMVCRESTClient.New.BaseURL('localhost', 8080);
   lClient.ReadTimeOut(0);
   lClient.SetBasicAuthorization('user_raise_exception', 'user_raise_exception');
-  lRest := lClient.Post('/login');
+  lRest := lClient.Post('/api/login');
   if not lRest.Success then
   begin
-    ShowMessage(
-      'HTTP ERROR: ' + lRest.StatusCode.ToString + sLineBreak +
-      'HTTP ERROR MESSAGE: ' + lRest.StatusText + sLineBreak +
-      'ERROR MESSAGE: ' + lRest.Content);
+    ShowMessage('HTTP ERROR: ' + lRest.StatusCode.ToString + sLineBreak +
+                'HTTP ERROR MESSAGE: ' + lRest.StatusText + sLineBreak +
+                'ERROR MESSAGE: ' + lRest.Content);
     Exit;
   end;
 

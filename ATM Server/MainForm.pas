@@ -49,7 +49,7 @@ implementation
 procedure TfrmMain.FormCreate(Sender: TObject);
 begin
   FServer := TIdHTTPWebBrokerBridge.Create(Self);
-  FServer.OnParseAuthentication := TMVCParseAuthentication.OnParseAuthentication;;
+  FServer.OnParseAuthentication := TMVCParseAuthentication.OnParseAuthentication;
 end;
 
 procedure TfrmMain.FormDestroy(Sender: TObject);
