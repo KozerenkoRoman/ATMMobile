@@ -4,8 +4,8 @@ interface
 
 uses
   MVCFramework, MVCFramework.Commons, MVCFramework.Serializer.Commons, MVCFramework.Swagger.Commons, Controllers.Base,
-  Services.Base, Services.AtmIndex, Entities.AtmIndex, Commons, mvcframework.Serializer.Intf, System.Generics.Collections,
-  System.SysUtils;
+  Services.Base, Commons, mvcframework.Serializer.Intf, System.Generics.Collections, System.SysUtils, Services.AtmIndex,
+  Entities.AtmIndex;
 
 type
   [MVCDoc('Resource that manages AtmIndex CRUD')]
@@ -24,22 +24,27 @@ type
     procedure GetMeta;
 
     [MVCDoc('Returns the AtmIndex with the specified key')]
+    [MVCSwagParam(plPath, 'AYear', 'yehusyear field', ptInteger, True, '2021')]
+    [MVCSwagParam(plPath, 'AKey', 'key_string field', ptString, True, 'Hafkada')]
     [MVCPath('/($AKey)/($AYear)')]
     [MVCHTTPMethod([httpGET])]
     procedure GetByName(AKey: string; AYear: Integer);
 
     [MVCDoc('Returns next value from AtmIndex with the specified key')]
-    [MVCSwagParam(plPath, 'key', 'Key String', ptString, True)]
+    [MVCSwagParam(plPath, 'AKey', 'key_string field', ptString, True, 'Hafkada')]
     [MVCPath('/next')]
     [MVCHTTPMethod([httpGET])]
     procedure GetNextNumber;
 
     [MVCDoc('Deletes the AtmIndex with the specified id')]
+    [MVCSwagParam(plPath, 'AYear', 'yehusyear field', ptInteger, True, '2021')]
+    [MVCSwagParam(plPath, 'AKey', 'key_string field', ptString, True, 'Hafkada')]
     [MVCPath('/($AKey)/($AYear)')]
     [MVCHTTPMethod([httpDelete])]
     procedure Delete(AKey: string; AYear: Integer);
 
     [MVCDoc('Updates the AtmIndex with the specified id and return "200: OK"')]
+    [MVCSwagParam(plPath, 'AKey', 'key_string field', ptString, True, 'Hafkada')]
     [MVCPath('/($AKey)')]
     [MVCHTTPMethod([httpPUT])]
     procedure Update(AKey: string);
@@ -119,7 +124,7 @@ end;
 
 procedure TAtmIndexController.Delete(AKey: string; AYear: Integer);
 var
-  AtmIndex: TAtmIndex;
+  AtmIndex: Entities.AtmIndex.TAtmIndex;
 begin
   GetAtmIndexService.StartTransaction;
   try
@@ -138,9 +143,9 @@ end;
 
 procedure TAtmIndexController.Update(AKey: string);
 var
-  AtmIndex: TAtmIndex;
+  AtmIndex: Entities.AtmIndex.TAtmIndex;
 begin
-  AtmIndex := Context.Request.BodyAs<TAtmIndex>;
+  AtmIndex := Context.Request.BodyAs<Entities.AtmIndex.TAtmIndex>;
   try
     AtmIndex.Key_String := AKey;
     GetAtmIndexService.Update(AtmIndex);

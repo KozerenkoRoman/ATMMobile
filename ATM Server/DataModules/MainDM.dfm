@@ -8,7 +8,11 @@ object dmMain: TdmMain
       'Server=localhost'
       'CharacterSet=UTF8'
       'ServerCharSet=UTF8'
-      'ConnectionDef=WinTuda')
+      'DriverID=MSSQL'
+      'Database=Ben'
+      'Password=111'
+      'ODBCAdvanced=AutoTranslate=yes'
+      'User_Name=sa')
     FormatOptions.AssignedValues = [fvMapRules]
     FormatOptions.OwnMapRules = True
     FormatOptions.MapRules = <
@@ -17,7 +21,6 @@ object dmMain: TdmMain
         TargetDataType = dtWideString
       end>
     ConnectedStoredUsage = []
-    Connected = True
     LoginPrompt = False
     Left = 64
     Top = 40

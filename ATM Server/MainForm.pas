@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Messages, System.SysUtils, System.Variants, Winapi.Windows, Winapi.ShellApi, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.AppEvnts, Vcl.StdCtrls, IdHTTPWebBrokerBridge, Web.HTTPApp, IdSSLOpenSSL,
-  System.IOUtils, MVCFramework.Logger;
+  System.IOUtils, MVCFramework.Logger, Controllers.Base, MVCFramework.Commons;
 
 type
   TSSLEventHandlers = class
@@ -49,6 +49,7 @@ implementation
 procedure TfrmMain.FormCreate(Sender: TObject);
 begin
   FServer := TIdHTTPWebBrokerBridge.Create(Self);
+  FServer.OnParseAuthentication := TMVCParseAuthentication.OnParseAuthentication;;
 end;
 
 procedure TfrmMain.FormDestroy(Sender: TObject);

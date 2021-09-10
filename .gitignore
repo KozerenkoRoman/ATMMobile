@@ -7,3 +7,8 @@
 /ATM Server/ATMServer.~dsk
 /ATM Server/bin/ATMServer.exe
 /ATM Server/bin/ATM.exe
+*.~*
+/ATM Server/Controllers/__history/
+/ATM Server/Controllers/__recovery/
+/ATM Server/DataModules/__history/
+/ATM Server/DataModules/__recovery/
